@@ -24,6 +24,7 @@ const Colors = {
   offWhite: "#F8F8F8",
   green: "#78f57d",
   red: "#ff0303",
+  blue: "#1B81A1",
   dark: "#111111",
   dark2: "#161616",
 };

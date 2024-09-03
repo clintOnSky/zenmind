@@ -44,7 +44,6 @@ const CustomInput = ({
     setIsValid(validateString(value, regex));
   }, [value]);
 
-  console.log(isValid);
   return (
     <View
       style={[styles.container, { borderColor: borderColor ?? Colors.white }]}
@@ -53,6 +52,7 @@ const CustomInput = ({
         <Ionicons
           name={type === InputType.EMAIL ? "mail-sharp" : "lock-closed"}
           size={24}
+          style={styles.icon}
           color={Colors.white}
         />
       )}
@@ -73,6 +73,7 @@ const CustomInput = ({
           keyboardType={!isVisible ? "default" : "visible-password"}
           secureTextEntry={!isVisible}
           {...props}
+          onLayout={(event) => console.log(event.nativeEvent.layout.height)}
         />
       ) : (
         <TextInput style={styles.input} {...props} />
@@ -83,6 +84,7 @@ const CustomInput = ({
             name={!isVisible ? "eye-off-outline" : "eye-outline"}
             color={Colors.white}
             size={24}
+            style={styles.icon}
           />
         </TouchableOpacity>
       ) : (
@@ -90,6 +92,7 @@ const CustomInput = ({
           name={isValid ? "checkmark-circle-outline" : "close-circle-outline"}
           color={!value ? "transparent" : isValid ? Colors.green : Colors.red}
           size={24}
+          style={styles.icon}
         />
       )}
     </View>
@@ -101,21 +104,25 @@ export default CustomInput;
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-end",
     borderBottomWidth: 1,
     borderColor: Colors.white,
-    paddingTop: 23,
-    paddingLeft: 27,
-    paddingRight: 7,
-    gap: 22,
+    minHeight: 54,
+    gap: 11,
+  },
+  icon: {
+    marginBottom: 10,
   },
   input: {
     flex: 1,
     fontFamily: Fonts.DMSans_Regular,
+    paddingLeft: 16,
+    paddingRight: 7,
+    paddingBottom: 12,
     fontSize: Sizes[16],
-    paddingBottom: 16,
+    height: "100%",
     color: Colors.white,
     textAlignVertical: "bottom",
-    lineHeight: Sizes[16] * 1.19,
+    lineHeight: Sizes[18],
   },
 });

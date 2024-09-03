@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { useCallback, useState } from "react";
 import {
   Control,
   Controller,
@@ -10,6 +10,8 @@ import {
 import CustomInput from "./CustomInput";
 import { InputType } from "@/utils/enums/input";
 import Colors from "@/constants/Colors";
+import Fonts from "@/constants/Fonts";
+import Sizes from "@/constants/Sizes";
 
 type Rules = Omit<
   RegisterOptions<FieldValues>,
@@ -22,18 +24,13 @@ type Props = {
   control: Control<any>;
   type: InputType;
   rules?: Rules;
-  showError?: boolean;
 };
 
-const FormInput = ({
-  name,
-  type,
-  icon,
-  control,
-  rules,
-  showError = true,
-}: Props) => {
-  // const value = useWatch({control, name, })
+const FormInput = ({ name, type, icon, control, rules }: Props) => {
+  const [isFocused, setIsFocused] = useState<boolean>(false);
+
+  const watchedValue = useWatch({ control, name });
+
   return (
     <View>
       <Controller
@@ -43,21 +40,24 @@ const FormInput = ({
         render={({
           field: { onChange, onBlur, value },
           fieldState: { error },
-        }) => (
-          <View style={styles.container}>
+        }) => {
+          const valuesMatch = watchedValue === value;
+
+          return (
             <CustomInput
-              onBlur={onBlur}
               icon={icon}
               type={type}
-              borderColor={error ? Colors.red : Colors.white}
+              borderColor={isFocused ? Colors.blue : Colors.white}
+              onBlur={() => {
+                onBlur();
+                setIsFocused(false);
+              }}
+              onFocus={() => setIsFocused(true)}
               onChangeText={onChange}
               value={value}
             />
-            {/* {showError && error && (
-              <Text style={styles.error}>{error.message}</Text>
-            )} */}
-          </View>
-        )}
+          );
+        }}
       />
     </View>
   );
@@ -68,8 +68,5 @@ export default FormInput;
 const styles = StyleSheet.create({
   container: {
     gap: 4,
-  },
-  error: {
-    color: Colors.white,
   },
 });

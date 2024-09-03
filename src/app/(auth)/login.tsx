@@ -4,7 +4,6 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  useWindowDimensions,
   View,
 } from "react-native";
 import React from "react";
@@ -16,21 +15,22 @@ import Sizes from "@/constants/Sizes";
 import Fonts from "@/constants/Fonts";
 import CTAButton from "@/src/components/common/CTAButton";
 import { emailRegex } from "@/utils/regex";
-
-type FormData = {
-  email: string;
-  password: string;
-};
+import { LoginFormData } from "@/utils/types/form";
+import ValidationMessage from "@/src/components/auth/ValidationMessage";
 
 const Login = () => {
-  const { control, handleSubmit } = useForm<FormData>({
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>({
     defaultValues: {
       email: "",
       password: "",
     },
   });
 
-  const handleSignIn = (data: FormData) => {
+  const handleSignIn = (data: LoginFormData) => {
     console.log(JSON.stringify(data));
   };
 
@@ -59,6 +59,7 @@ const Login = () => {
                 },
               }}
             />
+            <ValidationMessage error={errors?.email?.message} />
           </View>
           <View style={styles.field}>
             <Text style={styles.label}>Password</Text>
@@ -74,6 +75,7 @@ const Login = () => {
                 },
               }}
             />
+            <ValidationMessage error={errors?.password?.message} />
           </View>
         </View>
       </ScrollView>
