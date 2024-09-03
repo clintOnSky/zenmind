@@ -5,9 +5,11 @@ import {
   Controller,
   FieldValues,
   RegisterOptions,
+  useWatch,
 } from "react-hook-form";
 import CustomInput from "./CustomInput";
 import { InputType } from "@/utils/enums/input";
+import Colors from "@/constants/Colors";
 
 type Rules = Omit<
   RegisterOptions<FieldValues>,
@@ -31,6 +33,7 @@ const FormInput = ({
   rules,
   showError = true,
 }: Props) => {
+  // const value = useWatch({control, name, })
   return (
     <View>
       <Controller
@@ -46,10 +49,13 @@ const FormInput = ({
               onBlur={onBlur}
               icon={icon}
               type={type}
+              borderColor={error ? Colors.red : Colors.white}
               onChangeText={onChange}
               value={value}
             />
-            {showError && error && <Text>{error.message}</Text>}
+            {/* {showError && error && (
+              <Text style={styles.error}>{error.message}</Text>
+            )} */}
           </View>
         )}
       />
@@ -60,5 +66,10 @@ const FormInput = ({
 export default FormInput;
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    gap: 4,
+  },
+  error: {
+    color: Colors.white,
+  },
 });

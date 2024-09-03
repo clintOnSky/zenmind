@@ -15,6 +15,7 @@ import { InputType } from "@/utils/enums/input";
 import Sizes from "@/constants/Sizes";
 import Fonts from "@/constants/Fonts";
 import CTAButton from "@/src/components/common/CTAButton";
+import { emailRegex } from "@/utils/regex";
 
 type FormData = {
   email: string;
@@ -22,14 +23,16 @@ type FormData = {
 };
 
 const Login = () => {
-  const { control, handleSubmit, watch } = useForm<FormData>({
+  const { control, handleSubmit } = useForm<FormData>({
     defaultValues: {
       email: "",
       password: "",
     },
   });
 
-  const { width, height: windowHeight } = useWindowDimensions();
+  const handleSignIn = (data: FormData) => {
+    console.log(JSON.stringify(data));
+  };
 
   return (
     <KeyboardAvoidingView
@@ -38,13 +41,24 @@ const Login = () => {
     >
       <ScrollView
         style={styles.container}
-        contentContainerStyle={[styles.content, { minHeight: windowHeight }]}
+        contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.form}>
           <View style={styles.field}>
             <Text style={styles.label}>Email Address</Text>
-            <FormInput name="email" control={control} type={InputType.EMAIL} />
+            <FormInput
+              name="email"
+              control={control}
+              type={InputType.EMAIL}
+              rules={{
+                required: "Email is required",
+                pattern: {
+                  value: emailRegex,
+                  message: "Email address is invalid",
+                },
+              }}
+            />
           </View>
           <View style={styles.field}>
             <Text style={styles.label}>Password</Text>
@@ -52,13 +66,20 @@ const Login = () => {
               name="password"
               control={control}
               type={InputType.PASSWORD}
+              rules={{
+                required: "Password is required",
+                minLength: {
+                  value: 8,
+                  message: "Password must be at least 8 characters long",
+                },
+              }}
             />
           </View>
         </View>
-        <View style={styles.buttonView}>
-          <CTAButton label="Sign In" />
-        </View>
       </ScrollView>
+      <View style={styles.buttonView}>
+        <CTAButton label="Sign In" onPress={handleSubmit(handleSignIn)} />
+      </View>
     </KeyboardAvoidingView>
   );
 };
@@ -93,8 +114,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: Colors.red,
-    paddingBottom: 20,
+    paddingVertical: 20,
     justifyContent: "flex-end",
   },
 });

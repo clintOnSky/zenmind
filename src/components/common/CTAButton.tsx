@@ -1,4 +1,9 @@
-import { StyleSheet, Text, View } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  TouchableWithoutFeedbackProps,
+  View,
+} from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import React from "react";
 import Sizes from "@/constants/Sizes";
@@ -9,16 +14,20 @@ import DBTouchableOpacity from "./DBTouchableOpacity";
 interface Props {
   google?: boolean;
   label?: string;
+  onPress?: TouchableWithoutFeedbackProps["onPress"];
 }
 
-const CTAButton = ({ google, label }: Props) => {
+const CTAButton = ({ google, label, onPress }: Props) => {
   return (
     <DBTouchableOpacity
-      onPress={() => {
-        google
-          ? console.log("Trying to sign in to Google")
-          : console.log("Pressed CTA Button");
-      }}
+      onPress={
+        onPress ||
+        (() => {
+          google
+            ? console.log("Trying to sign in to Google")
+            : console.log("Pressed CTA Button");
+        })
+      }
       style={styles.container}
       debounce
     >

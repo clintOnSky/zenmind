@@ -5,33 +5,55 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Colors from "@/constants/Colors";
 import Sizes from "@/constants/Sizes";
 import Fonts from "@/constants/Fonts";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { InputType } from "@/utils/enums/input";
+import { validateString } from "@/utils/validate";
+import { anyCharacterRegex, emailRegex } from "@/utils/regex";
 
 interface Props extends TextInputProps {
   icon?: React.ReactElement;
+  value: string;
+  borderColor?: string;
   type?: InputType;
+  regexValue?: RegExp;
 }
 
-const CustomInput = ({ icon, type, ...props }: Props) => {
+const CustomInput = ({
+  icon,
+  type,
+  borderColor,
+  value,
+  regexValue,
+  ...props
+}: Props) => {
   const [isVisible, setIsVisible] = useState<boolean>(false);
+  const [isValid, setIsValid] = useState<boolean>(false);
 
   const toggleVisibility = useCallback(() => {
     setIsVisible(!isVisible);
   }, [isVisible]);
 
+  useEffect(() => {
+    const regex: RegExp =
+      type === InputType.EMAIL ? emailRegex : regexValue ?? anyCharacterRegex;
+
+    setIsValid(validateString(value, regex));
+  }, [value]);
+
+  console.log(isValid);
   return (
-    <View style={styles.container}>
+    <View
+      style={[styles.container, { borderColor: borderColor ?? Colors.white }]}
+    >
       {icon ?? (
         <Ionicons
           name={type === InputType.EMAIL ? "mail-sharp" : "lock-closed"}
           size={24}
           color={Colors.white}
-          style={{ marginBottom: 16 }}
         />
       )}
       {type === InputType.EMAIL ? (
@@ -61,15 +83,13 @@ const CustomInput = ({ icon, type, ...props }: Props) => {
             name={!isVisible ? "eye-off-outline" : "eye-outline"}
             color={Colors.white}
             size={24}
-            style={{ marginBottom: 16 }}
           />
         </TouchableOpacity>
       ) : (
         <Ionicons
-          name={"checkmark-circle-outline" || "close-circle-outline"}
-          color={Colors.green}
+          name={isValid ? "checkmark-circle-outline" : "close-circle-outline"}
+          color={!value ? "transparent" : isValid ? Colors.green : Colors.red}
           size={24}
-          style={{ marginBottom: 16 }}
         />
       )}
     </View>
@@ -81,14 +101,12 @@ export default CustomInput;
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    alignItems: "flex-end",
+    alignItems: "center",
     borderBottomWidth: 1,
     borderColor: Colors.white,
-    // marginHorizontal: 20,
     paddingTop: 23,
     paddingLeft: 27,
     paddingRight: 7,
-    // backgroundColor: "red",
     gap: 22,
   },
   input: {
@@ -99,6 +117,5 @@ const styles = StyleSheet.create({
     color: Colors.white,
     textAlignVertical: "bottom",
     lineHeight: Sizes[16] * 1.19,
-    backgroundColor: "blue",
   },
 });
