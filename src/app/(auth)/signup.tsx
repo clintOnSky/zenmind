@@ -4,10 +4,9 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  useWindowDimensions,
   View,
 } from "react-native";
-import React from "react";
+import React, { useCallback, useMemo } from "react";
 import Colors from "@/constants/Colors";
 import FormInput from "@/src/components/common/FormInput";
 import { useForm } from "react-hook-form";
@@ -16,23 +15,50 @@ import Sizes from "@/constants/Sizes";
 import Fonts from "@/constants/Fonts";
 import CTAButton from "@/src/components/common/CTAButton";
 import { emailRegex } from "@/utils/regex";
-
-type FormData = {
-  email: string;
-  password: string;
-};
+import { SignupFormData } from "@/utils/types/form";
+import ValidationMessage from "@/src/components/auth/ValidationMessage";
+import { router } from "expo-router";
+import NavButton from "@/src/components/common/NavButton";
 
 const SignUp = () => {
-  const { control, handleSubmit } = useForm<FormData>({
+  const {
+    control,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<SignupFormData>({
     defaultValues: {
       email: "",
       password: "",
+      confirmPassword: "",
     },
   });
 
-  const handleSignIn = (data: FormData) => {
+  const watchedPassword = watch("password");
+  const watchedConfirmPwd = watch("confirmPassword");
+
+  const handleSignUp = (data: SignupFormData) => {
     console.log(JSON.stringify(data));
   };
+
+  const { errorMessage, showSuccessMessage } = useMemo(() => {
+    if (
+      errors.confirmPassword?.message ||
+      (!watchedPassword && !watchedConfirmPwd)
+    ) {
+      return {
+        showSuccessMessage: false,
+        errorMessage: errors?.confirmPassword?.message,
+      };
+    }
+    if (watchedPassword !== watchedConfirmPwd) {
+      return {
+        showSuccessMessage: false,
+        errorMessage: "Password does not match",
+      };
+    }
+    return { showSuccessMessage: true, errorMessage: "Password matched" };
+  }, [watchedPassword, watchedConfirmPwd, errors?.confirmPassword?.message]);
 
   return (
     <KeyboardAvoidingView
@@ -59,6 +85,7 @@ const SignUp = () => {
                 },
               }}
             />
+            <ValidationMessage errorMessage={errors.email?.message} />
           </View>
           <View style={styles.field}>
             <Text style={styles.label}>Password</Text>
@@ -74,11 +101,31 @@ const SignUp = () => {
                 },
               }}
             />
+            <ValidationMessage errorMessage={errors.password?.message} />
+          </View>
+          <View style={styles.field}>
+            <Text style={styles.label}>Re-type Password</Text>
+            <FormInput
+              name="confirmPassword"
+              control={control}
+              type={InputType.CONFIRM_PASSWORD}
+              rules={{
+                required: "Password is required",
+                validate: (value) => {
+                  return value === watchedPassword || "Password does not match";
+                },
+              }}
+            />
+            <ValidationMessage
+              errorMessage={errorMessage}
+              successMessage="Password matched"
+              showSuccessMessage={showSuccessMessage}
+            />
           </View>
         </View>
       </ScrollView>
       <View style={styles.buttonView}>
-        <CTAButton label="Sign In" onPress={handleSubmit(handleSignIn)} />
+        <NavButton label="Continue" href={"/(onboarding)/welcome"} />
       </View>
     </KeyboardAvoidingView>
   );
@@ -92,7 +139,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.dark,
   },
   content: {
-    paddingTop: 60,
+    paddingTop: 40,
     paddingBottom: 100,
   },
   form: {

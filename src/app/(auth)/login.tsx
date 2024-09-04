@@ -18,7 +18,7 @@ import { emailRegex } from "@/utils/regex";
 import { LoginFormData } from "@/utils/types/form";
 import ValidationMessage from "@/src/components/auth/ValidationMessage";
 
-const Login = () => {
+const LoginScreen = () => {
   const {
     control,
     handleSubmit,
@@ -59,7 +59,7 @@ const Login = () => {
                 },
               }}
             />
-            <ValidationMessage error={errors?.email?.message} />
+            <ValidationMessage errorMessage={errors.email?.message} />
           </View>
           <View style={styles.field}>
             <Text style={styles.label}>Password</Text>
@@ -75,7 +75,7 @@ const Login = () => {
                 },
               }}
             />
-            <ValidationMessage error={errors?.password?.message} />
+            <ValidationMessage errorMessage={errors.password?.message} />
           </View>
         </View>
       </ScrollView>
@@ -86,7 +86,7 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default LoginScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.dark,
   },
   content: {
-    paddingTop: 60,
+    paddingTop: 40,
     paddingBottom: 100,
   },
   form: {

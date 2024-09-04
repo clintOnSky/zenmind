@@ -65,7 +65,7 @@ const CustomInput = ({
           textContentType="emailAddress"
           {...props}
         />
-      ) : type === InputType.PASSWORD ? (
+      ) : type === InputType.PASSWORD || type === InputType.CONFIRM_PASSWORD ? (
         <TextInput
           style={styles.input}
           cursorColor={Colors.white}
@@ -78,7 +78,7 @@ const CustomInput = ({
       ) : (
         <TextInput style={styles.input} {...props} />
       )}
-      {type === InputType.PASSWORD ? (
+      {type === InputType.PASSWORD || type === InputType.CONFIRM_PASSWORD ? (
         <TouchableOpacity onPress={toggleVisibility}>
           <Ionicons
             name={!isVisible ? "eye-off-outline" : "eye-outline"}
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     gap: 11,
   },
   icon: {
-    marginBottom: 10,
+    marginBottom: 8,
   },
   input: {
     flex: 1,
@@ -120,7 +120,6 @@ const styles = StyleSheet.create({
     paddingRight: 7,
     paddingBottom: 12,
     fontSize: Sizes[16],
-    height: "100%",
     color: Colors.white,
     textAlignVertical: "bottom",
     lineHeight: Sizes[18],

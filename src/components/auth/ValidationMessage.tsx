@@ -1,21 +1,31 @@
-import { StyleSheet, Text } from "react-native";
-import React from "react";
+import { StyleSheet, Text, ActivityIndicator, View } from "react-native";
+import React, { useEffect, useState } from "react";
 import Sizes from "@/constants/Sizes";
-import { FieldErrors } from "react-hook-form";
 import Colors from "@/constants/Colors";
 import Fonts from "@/constants/Fonts";
 
 type Props = {
-  error?: string;
+  errorMessage?: string;
   successMessage?: string;
+  showSuccessMessage?: boolean;
 };
 
-const ValidationMessage = ({ error, successMessage }: Props) => {
-  if (!error && !successMessage) return null;
-  console.log("🚀 ~ ValidationMessage ~ error:", error);
+const ValidationMessage = ({
+  errorMessage,
+  successMessage,
+  showSuccessMessage,
+}: Props) => {
+  if (!errorMessage && !showSuccessMessage) return null;
+  console.log("🚀 ~ errorMessage:", errorMessage);
+
   return (
-    <Text style={[styles.error, { color: error ? Colors.red : Colors.green }]}>
-      {error ?? successMessage}
+    <Text
+      style={[
+        styles.message,
+        { color: showSuccessMessage ? Colors.green : Colors.red },
+      ]}
+    >
+      {errorMessage ? errorMessage : showSuccessMessage ? successMessage : ""}
     </Text>
   );
 };
@@ -23,9 +33,14 @@ const ValidationMessage = ({ error, successMessage }: Props) => {
 export default ValidationMessage;
 
 const styles = StyleSheet.create({
-  error: {
+  message: {
     fontFamily: Fonts.DMSans_Regular,
     fontSize: Sizes[12],
     lineHeight: Sizes[18],
+  },
+  loadingContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    height: Sizes[18],
   },
 });
